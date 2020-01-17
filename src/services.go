@@ -61,7 +61,6 @@ func (service *RestService) getDevice(deviceId string) (string,error) {
   req.Header.Add("Content-Type","application/json");
   req.Header.Add("Authorization", fmt.Sprintf("Bearer %s",service.token));
   req.Header.Add("User-Agent","PostmanRuntime/7.21.0");
-  req.Header.Add("Accept-Encoding","gzip, deflate");
   resp, err := client.Do(req);
 
   if err != nil {
@@ -97,7 +96,6 @@ func (service *RestService) getDeviceStatus(deviceId string) (string,error) {
   req.Header.Add("Content-Type","application/json");
   req.Header.Add("Authorization", fmt.Sprintf("Bearer %s",service.token));
   req.Header.Add("User-Agent","PostmanRuntime/7.21.0");
-  req.Header.Add("Accept-Encoding","gzip, deflate");
   resp, err := client.Do(req);
 
   if err != nil {
@@ -143,7 +141,6 @@ func (service *RestService) listDevices(capabilities []string) (string,error) {
   req.Header.Add("Content-Type","application/json");
   req.Header.Add("Authorization", fmt.Sprintf("Bearer %s",service.token));
   req.Header.Add("User-Agent","PostmanRuntime/7.21.0");
-  req.Header.Add("Accept-Encoding","gzip, deflate");
   resp, err := client.Do(req);
 
   if err != nil {
@@ -164,7 +161,6 @@ func (service *RestService) listDevices(capabilities []string) (string,error) {
 
   return string(ret),nil;
 }
-
 
 func (service *RestService) executeCommand(deviceId string, capability string, command string, arguments []interface{}) (string,error) {
 
@@ -190,7 +186,76 @@ func (service *RestService) executeCommand(deviceId string, capability string, c
   req.Header.Add("Content-Type","application/json");
   req.Header.Add("Authorization", fmt.Sprintf("Bearer %s",service.token));
   req.Header.Add("User-Agent","PostmanRuntime/7.21.0");
-  req.Header.Add("Accept-Encoding","gzip, deflate");
+  resp, err := client.Do(req);
+
+  if err != nil {
+    return "", err;
+  }
+
+  defer resp.Body.Close();
+
+  var obj map[string] interface{};
+  decoder := json.NewDecoder(resp.Body);
+  err = decoder.Decode(&obj);
+
+  if err != nil {
+    return "", err;
+  }
+
+  ret, err := json.MarshalIndent(obj, "", "\t");
+
+  return string(ret),nil;
+}
+
+func (service *RestService) listScenes() (string,error) {
+
+  client := &http.Client{
+  };
+
+  req, err := http.NewRequest("GET", service.createUri("v1/scenes"), nil);
+
+  if err != nil {
+    return "", err;
+  }
+
+  req.Header.Add("Content-Type","application/json");
+  req.Header.Add("Authorization", fmt.Sprintf("Bearer %s",service.token));
+  req.Header.Add("User-Agent","PostmanRuntime/7.21.0");
+  resp, err := client.Do(req);
+
+  if err != nil {
+    return "", err;
+  }
+
+  defer resp.Body.Close();
+
+  var obj map[string] interface{};
+  decoder := json.NewDecoder(resp.Body);
+  err = decoder.Decode(&obj);
+
+  if err != nil {
+    return "", err;
+  }
+
+  ret, err := json.MarshalIndent(obj, "", "\t");
+
+  return string(ret),nil;
+}
+
+func (service *RestService) executeScene(scene string) (string,error) {
+
+  client := &http.Client{
+  };
+
+  req, err := http.NewRequest("POST", service.createUri("v1/scenes/") + scene + "/execute", nil);
+
+  if err != nil {
+    return "", err;
+  }
+
+  req.Header.Add("Content-Type","application/json");
+  req.Header.Add("Authorization", fmt.Sprintf("Bearer %s",service.token));
+  req.Header.Add("User-Agent","PostmanRuntime/7.21.0");
   resp, err := client.Do(req);
 
   if err != nil {

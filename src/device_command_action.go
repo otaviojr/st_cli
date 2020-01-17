@@ -30,7 +30,7 @@ type DeviceCommandCommandAction struct {
 /*
  * All commands supported in this context
  */
-var commands []Option = []Option {
+var deviceCommands []Option = []Option {
   Option {
     option: "status",
     action: DeviceStatusCommandAction{BaseCommandAction{name: "Status", description: "Get a device status using the device id",},},
@@ -76,7 +76,7 @@ func (action DeviceStatusCommandAction) run() bool {
   device,err := service.getDeviceStatus(deviceId);
 
   if err != nil {
-    fmt.Println("Error searching devices: $s", err);
+    fmt.Println("Error searching devices: %s", err);
     return false;
   }
 
@@ -112,7 +112,7 @@ func (action DeviceGetCommandAction) run() bool {
   device,err := service.getDevice(deviceId);
 
   if err != nil {
-    fmt.Println("Error searching devices: $s", err);
+    fmt.Println("Error searching devices: %s", err);
     return false;
   }
 
@@ -149,7 +149,7 @@ func (action DeviceListCommandAction) run() bool {
   devices,err := service.listDevices(capabilities);
 
   if err != nil {
-    fmt.Println("Error searching devices: $s", err);
+    fmt.Println("Error searching devices: %s", err);
     return false;
   }
 
@@ -213,7 +213,7 @@ func (action DeviceCommandCommandAction) run() bool {
   device,err := service.executeCommand(deviceId, capability, command, args);
 
   if err != nil {
-    fmt.Println("Error searching devices: $s", err);
+    fmt.Println("Error searching devices: %s", err);
     return false;
   }
 
@@ -227,7 +227,7 @@ func (action DeviceCommandAction) usage() {
   fmt.Println("\tUsage: st_cli device <command> <option>\r\n");
 
   fmt.Println("\tListing all commands:\r\n");
-  for _, command := range commands {
+  for _, command := range deviceCommands {
     fmt.Printf("\tCommand %s\r\n\t%s\r\n\r\n", command.action.getName(), command.action.getDescription());
     command.action.usage();
   }
@@ -243,7 +243,7 @@ func (action DeviceCommandAction) run() bool {
 
   var current_command *Option = nil;
 
-  for _, command := range commands {
+  for _, command := range deviceCommands {
     if command.option == *cmdPtr {
       current_command = &command;
       break;

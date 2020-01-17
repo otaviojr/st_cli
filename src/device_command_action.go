@@ -11,9 +11,10 @@ type DeviceCommandAction struct {
   BaseCommandAction
 }
 
-/*
- * NFC commands actions
- */
+type DeviceStatusCommandAction struct {
+  BaseCommandAction
+}
+
 type DeviceGetCommandAction struct {
   BaseCommandAction
 }
@@ -31,8 +32,12 @@ type DeviceCommandCommandAction struct {
  */
 var commands []Option = []Option {
   Option {
+    option: "status",
+    action: DeviceStatusCommandAction{BaseCommandAction{name: "Status", description: "Get a device status using the device id",},},
+  },
+  Option {
     option: "get",
-    action: DeviceGetCommandAction{BaseCommandAction{name: "Get", description: "Get a device using device id",},},
+    action: DeviceGetCommandAction{BaseCommandAction{name: "Get", description: "Get a device information using the device id",},},
   },
   Option {
     option: "list",
@@ -44,8 +49,47 @@ var commands []Option = []Option {
   },
 }
 
+func (action DeviceStatusCommandAction) usage() {
+  fmt.Println("\t\tUsage: st_cli device status <options>\r\n");
+  fmt.Println("\t\tOptions:\r\n");
+  fmt.Println("\t\t--token|-token=\t\tSmartthings token\r\n");
+  fmt.Println("\t\t--device|-device=\tDevice Id to retrieve status\r\n");
+}
+
+func (action DeviceStatusCommandAction) run() bool {
+  cmdLine := createCommandLineParser();
+
+  token :=  cmdLine.getStringParameter("token");
+  deviceId := cmdLine.getStringParameter("device");
+
+  if token == "" {
+    fmt.Println("Smartthings token missing. Type st_cli help to usage options.");
+    return false;
+  }
+
+  if deviceId == "" {
+    fmt.Println("Device ID missing. Type st_cli help to usage options.");
+    return false;
+  }
+
+  service := createRestService(token);
+  device,err := service.getDeviceStatus(deviceId);
+
+  if err != nil {
+    fmt.Println("Error searching devices: $s", err);
+    return false;
+  }
+
+  fmt.Println(device);
+
+  return true;
+}
+
 func (action DeviceGetCommandAction) usage() {
   fmt.Println("\t\tUsage: st_cli device get <options>\r\n");
+  fmt.Println("\t\tOptions:\r\n");
+  fmt.Println("\t\t--token|-token=\t\tSmartthings token\r\n");
+  fmt.Println("\t\t--device|-device=\tDevice Id to retrieve informations\r\n");
 }
 
 func (action DeviceGetCommandAction) run() bool {
@@ -79,6 +123,10 @@ func (action DeviceGetCommandAction) run() bool {
 
 func (action DeviceListCommandAction) usage() {
   fmt.Println("\t\tUsage: st_cli device list <options>\r\n");
+  fmt.Println("\t\tOptions:\r\n");
+  fmt.Println("\t\t--token|-token=\t\t\tSmartthings token\r\n");
+  fmt.Println("\t\t--capability|-capability=\tSmartthings capability to filter devies");
+  fmt.Println("\t\t\t\t\t\tIf not informed all devices will be returned\r\n");
 }
 
 func (action DeviceListCommandAction) run() bool {
@@ -112,6 +160,12 @@ func (action DeviceListCommandAction) run() bool {
 
 func (action DeviceCommandCommandAction) usage() {
   fmt.Println("\t\tUsage: st_cli device command <options>\r\n");
+  fmt.Println("\t\tOptions:\r\n");
+  fmt.Println("\t\t--token|-token=\t\t\tSmartthings token\r\n");
+  fmt.Println("\t\t--device|-device=\t\tDevice Id that will receive the command/arguments\r\n");
+  fmt.Println("\t\t--capability|-capability=\tSmartthings capability of this device\r\n");
+  fmt.Println("\t\t--command|-command=\t\tCommand that will be send\r\n");
+  fmt.Println("\t\t--arguments|-arguments=\t\tArguments to be send with the command. Comma separated.\r\n");
 }
 
 func (action DeviceCommandCommandAction) run() bool {
@@ -203,4 +257,3 @@ func (action DeviceCommandAction) run() bool {
 
   return current_command.action.run();
 }
-

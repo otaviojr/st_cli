@@ -80,6 +80,39 @@ func (service *RestService) getDevice(deviceId string) (string,error) {
   return string(ret),nil;
 }
 
+func (service *RestService) getDeviceStatus(deviceId string) (string,error) {
+
+  client := &http.Client{
+  };
+
+  req, err := http.NewRequest("GET", service.createUri("v1/devices") + "/" + deviceId + "/status", nil);
+
+  if err != nil {
+    return "", err;
+  }
+
+  req.Header.Add("Authorization", fmt.Sprintf("Bearer %s",service.token));
+  resp, err := client.Do(req);
+
+  if err != nil {
+    return "", err;
+  }
+
+  defer resp.Body.Close();
+
+  var obj map[string] interface{};
+  decoder := json.NewDecoder(resp.Body);
+  err = decoder.Decode(&obj);
+
+  if err != nil {
+    return "", err;
+  }
+
+  ret, err := json.MarshalIndent(obj, "", "\t");
+
+  return string(ret),nil;
+}
+
 func (service *RestService) listDevices(capabilities []string) (string,error) {
 
   params := "";
@@ -167,4 +200,3 @@ func (service *RestService) executeCommand(deviceId string, capability string, c
 
   return string(ret),nil;
 }
-

@@ -58,7 +58,10 @@ func (service *RestService) getDevice(deviceId string) (string,error) {
     return "", err;
   }
 
+  req.Header.Add("Content-Type","application/json");
   req.Header.Add("Authorization", fmt.Sprintf("Bearer %s",service.token));
+  req.Header.Add("User-Agent","PostmanRuntime/7.21.0");
+  req.Header.Add("Accept-Encoding","gzip, deflate");
   resp, err := client.Do(req);
 
   if err != nil {
@@ -91,7 +94,10 @@ func (service *RestService) getDeviceStatus(deviceId string) (string,error) {
     return "", err;
   }
 
+  req.Header.Add("Content-Type","application/json");
   req.Header.Add("Authorization", fmt.Sprintf("Bearer %s",service.token));
+  req.Header.Add("User-Agent","PostmanRuntime/7.21.0");
+  req.Header.Add("Accept-Encoding","gzip, deflate");
   resp, err := client.Do(req);
 
   if err != nil {
@@ -134,7 +140,10 @@ func (service *RestService) listDevices(capabilities []string) (string,error) {
     return "", err;
   }
 
+  req.Header.Add("Content-Type","application/json");
   req.Header.Add("Authorization", fmt.Sprintf("Bearer %s",service.token));
+  req.Header.Add("User-Agent","PostmanRuntime/7.21.0");
+  req.Header.Add("Accept-Encoding","gzip, deflate");
   resp, err := client.Do(req);
 
   if err != nil {
@@ -180,6 +189,8 @@ func (service *RestService) executeCommand(deviceId string, capability string, c
 
   req.Header.Add("Content-Type","application/json");
   req.Header.Add("Authorization", fmt.Sprintf("Bearer %s",service.token));
+  req.Header.Add("User-Agent","PostmanRuntime/7.21.0");
+  req.Header.Add("Accept-Encoding","gzip, deflate");
   resp, err := client.Do(req);
 
   if err != nil {

@@ -1,6 +1,5 @@
 package main
 
-import "os"
 import "fmt"
 
 type LocationCommandAction struct {
@@ -50,34 +49,8 @@ func (action LocationListCommandAction) run() bool {
 
 func (action LocationCommandAction) usage() {
   fmt.Println("\tUsage: st_cli location <command> <options>\r\n");
-
-  fmt.Println("\tListing all commands:\r\n");
-  for _, command := range locationCommands {
-    fmt.Printf("\tCommand %s\r\n\t%s\r\n\r\n", command.action.getName(), command.action.getDescription());
-    command.action.usage();
-  }}
-
+  action.usageAction(locationCommands);
+}
 func (action LocationCommandAction) run() bool {
-  if len(os.Args) < 3 {
-    fmt.Println("Device command: missing argument. Type st_cli help to usage options");
-    os.Exit(2);
-  }
-
-  cmdPtr := &os.Args[2];
-
-  var current_command *Option = nil;
-
-  for _, command := range locationCommands {
-    if command.option == *cmdPtr {
-      current_command = &command;
-      break;
-    }
-  }
-
-  if current_command == nil {
-    fmt.Printf("Command %s not found. Type st_cli help to usage options.\r\n\r\n", *cmdPtr);
-    os.Exit(2);
-  }
-
-  return current_command.action.run();
+  return action.runAction(locationCommands);
 }

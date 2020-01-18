@@ -1,6 +1,5 @@
 package main
 
-import "os"
 import "fmt"
 
 type RulesCommandAction struct {
@@ -135,35 +134,9 @@ func (action RulesDeleteCommandAction) run() bool {
 
 func (action RulesCommandAction) usage() {
   fmt.Println("\tUsage: st_cli rules <command> <option>\r\n");
-
-  fmt.Println("\tListing all commands:\r\n");
-  for _, command := range rulesCommands {
-    fmt.Printf("\tCommand %s\r\n\t%s\r\n\r\n", command.action.getName(), command.action.getDescription());
-    command.action.usage();
-  }
+  action.usageAction(rulesCommands);
 }
 
 func (action RulesCommandAction) run() bool {
-  if len(os.Args) < 3 {
-    fmt.Println("Rules command: missing argument. Type st_cli help to usage options");
-    os.Exit(2);
-  }
-
-  cmdPtr := &os.Args[2];
-
-  var current_command *Option = nil;
-
-  for _, command := range rulesCommands {
-    if command.option == *cmdPtr {
-      current_command = &command;
-      break;
-    }
-  }
-
-  if current_command == nil {
-    fmt.Printf("Command %s not found. Type st_cli help to usage options.\r\n\r\n", *cmdPtr);
-    os.Exit(2);
-  }
-
-  return current_command.action.run();
+  return action.runAction(rulesCommands);
 }

@@ -1,6 +1,5 @@
 package main
 
-import "os"
 import "fmt"
 import "strings"
 import "strconv"
@@ -226,34 +225,9 @@ func (action DeviceCommandCommandAction) run() bool {
 func (action DeviceCommandAction) usage() {
   fmt.Println("\tUsage: st_cli device <command> <option>\r\n");
 
-  fmt.Println("\tListing all commands:\r\n");
-  for _, command := range deviceCommands {
-    fmt.Printf("\tCommand %s\r\n\t%s\r\n\r\n", command.action.getName(), command.action.getDescription());
-    command.action.usage();
-  }
+  action.usageAction(deviceCommands);
 }
 
 func (action DeviceCommandAction) run() bool {
-  if len(os.Args) < 3 {
-    fmt.Println("Device command: missing argument. Type st_cli help to usage options");
-    os.Exit(2);
-  }
-
-  cmdPtr := &os.Args[2];
-
-  var current_command *Option = nil;
-
-  for _, command := range deviceCommands {
-    if command.option == *cmdPtr {
-      current_command = &command;
-      break;
-    }
-  }
-
-  if current_command == nil {
-    fmt.Printf("Command %s not found. Type st_cli help to usage options.\r\n\r\n", *cmdPtr);
-    os.Exit(2);
-  }
-
-  return current_command.action.run();
+  return action.runAction(deviceCommands);
 }

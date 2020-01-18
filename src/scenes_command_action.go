@@ -1,6 +1,5 @@
 package main
 
-import "os"
 import "fmt"
 
 type ScenesCommandAction struct {
@@ -15,7 +14,7 @@ type ScenesExecuteCommandAction struct {
   BaseCommandAction
 }
 
-var sceneCommands []Option = []Option {
+var scenesCommands []Option = []Option {
   Option {
     option: "list",
     action: ScenesListCommandAction{BaseCommandAction{name: "List", description: "List all available scenes",},},
@@ -93,35 +92,9 @@ func (action ScenesExecuteCommandAction) run() bool {
 
 func (action ScenesCommandAction) usage() {
   fmt.Println("\tUsage: st_cli scenes <command> <option>\r\n");
-
-  fmt.Println("\tListing all commands:\r\n");
-  for _, command := range sceneCommands {
-    fmt.Printf("\tCommand %s\r\n\t%s\r\n\r\n", command.action.getName(), command.action.getDescription());
-    command.action.usage();
-  }
+  action.usageAction(scenesCommands);
 }
 
 func (action ScenesCommandAction) run() bool {
-  if len(os.Args) < 3 {
-    fmt.Println("Scenes command: missing argument. Type st_cli help to usage options");
-    os.Exit(2);
-  }
-
-  cmdPtr := &os.Args[2];
-
-  var current_command *Option = nil;
-
-  for _, command := range sceneCommands {
-    if command.option == *cmdPtr {
-      current_command = &command;
-      break;
-    }
-  }
-
-  if current_command == nil {
-    fmt.Printf("Command %s not found. Type st_cli help to usage options.\r\n\r\n", *cmdPtr);
-    os.Exit(2);
-  }
-
-  return current_command.action.run();
+  return action.runAction(scenesCommands);
 }

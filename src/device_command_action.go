@@ -124,7 +124,7 @@ func (action DeviceListCommandAction) usage() {
   fmt.Println("\t\tUsage: st_cli device list <options>\r\n");
   fmt.Println("\t\tOptions:\r\n");
   fmt.Println("\t\t--token|-token=\t\t\tSmartthings token\r\n");
-  fmt.Println("\t\t--capability|-capability=\tSmartthings capability to filter devies");
+  fmt.Println("\t\t--capability|-capability=\tSmartthings capability to filter devices");
   fmt.Println("\t\t\t\t\t\tIf not informed all devices will be returned\r\n");
 }
 

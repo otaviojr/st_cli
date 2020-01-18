@@ -24,6 +24,10 @@ var contexts []Option = []Option {
     option: "scenes",
     action: ScenesCommandAction{BaseCommandAction {name: "scenes", description: "Handle smartthings scenes"},},
   },
+  Option {
+    option: "rules",
+    action: RulesCommandAction{BaseCommandAction {name: "rules", description: "Handle smartthings rules"},},
+  },
 }
 
 func (action HelpCommandAction) usage() {

@@ -67,7 +67,7 @@ you want to know if your door is locked?
 ./st_cli device status --token <<smartthing token>> --device <<device_id>> | jq --raw-output '.components.main.lock.lock.value'
 ```
 
-you want to unlock your door?
+you want to unlock your door? (remember my motivation??)
 
 ```
 ./st_cli device command --token <<smartthing token>> --device <<device_id>> --command unlock --capability lock

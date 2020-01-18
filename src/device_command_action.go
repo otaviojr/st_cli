@@ -58,7 +58,7 @@ func (action DeviceStatusCommandAction) usage() {
 func (action DeviceStatusCommandAction) run() bool {
   cmdLine := createCommandLineParser();
 
-  token :=  cmdLine.getStringParameter("token");
+  token:= action.getToken(cmdLine);
   deviceId := cmdLine.getStringParameter("device");
 
   if token == "" {
@@ -94,7 +94,7 @@ func (action DeviceGetCommandAction) usage() {
 func (action DeviceGetCommandAction) run() bool {
   cmdLine := createCommandLineParser();
 
-  token :=  cmdLine.getStringParameter("token");
+  token:= action.getToken(cmdLine);
   deviceId := cmdLine.getStringParameter("device");
 
   if token == "" {
@@ -131,7 +131,7 @@ func (action DeviceListCommandAction) usage() {
 func (action DeviceListCommandAction) run() bool {
   cmdLine := createCommandLineParser();
 
-  token :=  cmdLine.getStringParameter("token");
+  token:= action.getToken(cmdLine);
   capability := cmdLine.getStringParameter("capability");
 
   if token == "" {
@@ -170,7 +170,7 @@ func (action DeviceCommandCommandAction) usage() {
 func (action DeviceCommandCommandAction) run() bool {
   cmdLine := createCommandLineParser();
 
-  token :=  cmdLine.getStringParameter("token");
+  token:= action.getToken(cmdLine);
   deviceId := cmdLine.getStringParameter("device");
   capability := cmdLine.getStringParameter("capability");
   command := cmdLine.getStringParameter("command");

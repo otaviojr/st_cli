@@ -79,7 +79,7 @@ func (action RulesListCommandAction) usage() {
 func (action RulesListCommandAction) run() bool {
   cmdLine := createCommandLineParser();
 
-  token :=  cmdLine.getStringParameter("token");
+  token:= action.getToken(cmdLine);
   location :=  cmdLine.getStringParameter("location");
 
   if token == "" {

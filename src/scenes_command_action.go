@@ -34,7 +34,7 @@ func (action ScenesListCommandAction) usage() {
 func (action ScenesListCommandAction) run() bool {
   cmdLine := createCommandLineParser();
 
-  token :=  cmdLine.getStringParameter("token");
+  token:= action.getToken(cmdLine);
 
   if token == "" {
     fmt.Println("Smartthings token missing. Type st_cli help to usage options.");
@@ -64,7 +64,7 @@ func (action ScenesExecuteCommandAction) usage() {
 func (action ScenesExecuteCommandAction) run() bool {
   cmdLine := createCommandLineParser();
 
-  token :=  cmdLine.getStringParameter("token");
+  token:= action.getToken(cmdLine);
   scene :=  cmdLine.getStringParameter("scene");
 
   if token == "" {

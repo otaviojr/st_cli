@@ -11,6 +11,7 @@ type BaseCommandAction struct {
 type CommandAction interface {
   getName() string
   getDescription() string
+  getToken(cmdLine *CommandLine) string
   run() bool
   runAction(options []Option) bool
   usage()
@@ -23,6 +24,15 @@ func (action BaseCommandAction) getName() string {
 
 func (action BaseCommandAction) getDescription() string {
   return action.description
+}
+
+func (action BaseCommandAction) getToken(cmdLine *CommandLine) string {
+  token := cmdLine.getStringParameter("token");
+  if token == "" {
+    token = os.Getenv("SMARTTHINGS_TOKEN");
+  }
+
+  return token;
 }
 
 func (action BaseCommandAction) run() bool {

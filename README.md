@@ -1,7 +1,7 @@
 # st_cli
 [![Donate](/docs/donation.png?raw=true)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=65XBWNBZ69ZP4&currency_code=USD&source=url)
 
-This is a SmartThings command line client written in golang
+SmartThings command line client written in golang
 
 # Motivation
 

@@ -7,7 +7,7 @@ SmartThings command line client written in golang
 
 When trying to make an app in python to run on a raspberry pi zero W, I noticed
 that it takes 8s only to start running the script. Now imagine waiting 15s to
-unlock your door. Now, imagine that if you need to go to the bathroom! :-)
+unlock your door. Now, imagine that when you need to go to the bathroom! :-)
 
 Nodejs do not make it much better.
 

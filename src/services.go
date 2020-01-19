@@ -30,7 +30,7 @@ package main
 import "net/http"
 import "encoding/json"
 import "bytes"
-//import "io/ioutil"
+import "io"
 import "fmt"
 
 type Command struct {
@@ -74,12 +74,11 @@ func (service *RestService) createUri(path string) string {
   return fmt.Sprintf("%s://%s:%d/%s", service.protocol, service.hostname, service.port, path);
 }
 
-func (service *RestService) getDevice(deviceId string) (string,error) {
-
+func (service *RestService) serviceResquest(method string, endpoint string, body io.Reader) (string,error) {
   client := &http.Client{
   };
 
-  req, err := http.NewRequest("GET", service.createUri("v1/devices") + "/" + deviceId, nil);
+  req, err := http.NewRequest(method, endpoint, body);
 
   if err != nil {
     return "", err;
@@ -109,39 +108,12 @@ func (service *RestService) getDevice(deviceId string) (string,error) {
   return string(ret),nil;
 }
 
+func (service *RestService) getDevice(deviceId string) (string,error) {
+  return service.serviceResquest("GET", service.createUri("v1/devices") + "/" + deviceId, nil);
+}
+
 func (service *RestService) getDeviceStatus(deviceId string) (string,error) {
-
-  client := &http.Client{
-  };
-
-  req, err := http.NewRequest("GET", service.createUri("v1/devices") + "/" + deviceId + "/status", nil);
-
-  if err != nil {
-    return "", err;
-  }
-
-  req.Header.Add("Content-Type","application/json");
-  req.Header.Add("Authorization", fmt.Sprintf("Bearer %s",service.token));
-  req.Header.Add("User-Agent","PostmanRuntime/7.21.0");
-  resp, err := client.Do(req);
-
-  if err != nil {
-    return "", err;
-  }
-
-  defer resp.Body.Close();
-
-  var obj map[string] interface{};
-  decoder := json.NewDecoder(resp.Body);
-  err = decoder.Decode(&obj);
-
-  if err != nil {
-    return "", err;
-  }
-
-  ret, err := json.MarshalIndent(obj, "", "\t");
-
-  return string(ret),nil;
+  return service.serviceResquest("GET", service.createUri("v1/devices") + "/" + deviceId + "/status", nil);
 }
 
 func (service *RestService) listDevices(capabilities []string) (string,error) {
@@ -156,44 +128,10 @@ func (service *RestService) listDevices(capabilities []string) (string,error) {
     params += "capabilitiesMode=or";
   }
 
-  client := &http.Client{
-  };
-
-  req, err := http.NewRequest("GET", service.createUri("v1/devices") + params, nil);
-
-  if err != nil {
-    return "", err;
-  }
-
-  req.Header.Add("Content-Type","application/json");
-  req.Header.Add("Authorization", fmt.Sprintf("Bearer %s",service.token));
-  req.Header.Add("User-Agent","PostmanRuntime/7.21.0");
-  resp, err := client.Do(req);
-
-  if err != nil {
-    return "", err;
-  }
-
-  defer resp.Body.Close();
-
-  var obj map[string] interface{};
-  decoder := json.NewDecoder(resp.Body);
-  err = decoder.Decode(&obj);
-
-  if err != nil {
-    return "", err;
-  }
-
-  ret, err := json.MarshalIndent(obj, "", "\t");
-
-  return string(ret),nil;
+  return service.serviceResquest("GET", service.createUri("v1/devices") + params, nil);
 }
 
 func (service *RestService) executeCommand(deviceId string, capability string, command string, arguments []interface{}) (string,error) {
-
-  client := &http.Client{
-  };
-
   cmd := createCommand(capability, command, arguments);
   cmds := createCommands();
   cmds.addCommand(cmd);
@@ -204,252 +142,35 @@ func (service *RestService) executeCommand(deviceId string, capability string, c
     return "", err;
   }
 
-  req, err := http.NewRequest("POST", service.createUri("v1/devices") + "/" + deviceId + "/commands",  bytes.NewBuffer(jsonStr));
-
-  if err != nil {
-    return "", err;
-  }
-
-  req.Header.Add("Content-Type","application/json");
-  req.Header.Add("Authorization", fmt.Sprintf("Bearer %s",service.token));
-  req.Header.Add("User-Agent","PostmanRuntime/7.21.0");
-  resp, err := client.Do(req);
-
-  if err != nil {
-    return "", err;
-  }
-
-  defer resp.Body.Close();
-
-  var obj map[string] interface{};
-  decoder := json.NewDecoder(resp.Body);
-  err = decoder.Decode(&obj);
-
-  if err != nil {
-    return "", err;
-  }
-
-  ret, err := json.MarshalIndent(obj, "", "\t");
-
-  return string(ret),nil;
+  return service.serviceResquest("POST", service.createUri("v1/devices") + "/" + deviceId + "/commands", bytes.NewBuffer(jsonStr));
 }
 
 func (service *RestService) listScenes() (string,error) {
-
-  client := &http.Client{
-  };
-
-  req, err := http.NewRequest("GET", service.createUri("v1/scenes"), nil);
-
-  if err != nil {
-    return "", err;
-  }
-
-  req.Header.Add("Content-Type","application/json");
-  req.Header.Add("Authorization", fmt.Sprintf("Bearer %s",service.token));
-  req.Header.Add("User-Agent","PostmanRuntime/7.21.0");
-  resp, err := client.Do(req);
-
-  if err != nil {
-    return "", err;
-  }
-
-  defer resp.Body.Close();
-
-  var obj map[string] interface{};
-  decoder := json.NewDecoder(resp.Body);
-  err = decoder.Decode(&obj);
-
-  if err != nil {
-    return "", err;
-  }
-
-  ret, err := json.MarshalIndent(obj, "", "\t");
-
-  return string(ret),nil;
+  return service.serviceResquest("GET", service.createUri("v1/scenes"), nil);
 }
 
 func (service *RestService) executeScene(scene string) (string,error) {
-
-  client := &http.Client{
-  };
-
-  req, err := http.NewRequest("POST", service.createUri("v1/scenes/") + scene + "/execute", nil);
-
-  if err != nil {
-    return "", err;
-  }
-
-  req.Header.Add("Content-Type","application/json");
-  req.Header.Add("Authorization", fmt.Sprintf("Bearer %s",service.token));
-  req.Header.Add("User-Agent","PostmanRuntime/7.21.0");
-  resp, err := client.Do(req);
-
-  if err != nil {
-    return "", err;
-  }
-
-  defer resp.Body.Close();
-
-  var obj map[string] interface{};
-  decoder := json.NewDecoder(resp.Body);
-  err = decoder.Decode(&obj);
-
-  if err != nil {
-    return "", err;
-  }
-
-  ret, err := json.MarshalIndent(obj, "", "\t");
-
-  return string(ret),nil;
+  return service.serviceResquest("POST", service.createUri("v1/scenes/") + scene + "/execute", nil);
 }
 
 func (service *RestService) listLocations() (string,error) {
-
-  client := &http.Client{
-  };
-
-  req, err := http.NewRequest("GET", service.createUri("v1/locations"), nil);
-
-  if err != nil {
-    return "", err;
-  }
-
-  req.Header.Add("Content-Type","application/json");
-  req.Header.Add("Authorization", fmt.Sprintf("Bearer %s",service.token));
-  req.Header.Add("User-Agent","PostmanRuntime/7.21.0");
-  resp, err := client.Do(req);
-
-  if err != nil {
-    return "", err;
-  }
-
-  defer resp.Body.Close();
-
-  var obj map[string] interface{};
-  decoder := json.NewDecoder(resp.Body);
-  err = decoder.Decode(&obj);
-
-  if err != nil {
-    return "", err;
-  }
-
-  ret, err := json.MarshalIndent(obj, "", "\t");
-
-  return string(ret),nil;
+  return service.serviceResquest("GET", service.createUri("v1/locations"), nil);
 }
 
 
 func (service *RestService) listRules(location string) (string,error) {
-
-  client := &http.Client{
-  };
-
-  req, err := http.NewRequest("GET", service.createUri("v1/rules") + "?locationId=" + location, nil);
-
-  if err != nil {
-    return "", err;
-  }
-
-  req.Header.Add("Content-Type","application/json");
-  req.Header.Add("Authorization", fmt.Sprintf("Bearer %s",service.token));
-  req.Header.Add("User-Agent","PostmanRuntime/7.21.0");
-  resp, err := client.Do(req);
-
-  if err != nil {
-    return "", err;
-  }
-
-  defer resp.Body.Close();
-
-  var obj map[string] interface{};
-  decoder := json.NewDecoder(resp.Body);
-  err = decoder.Decode(&obj);
-
-  if err != nil {
-    return "", err;
-  }
-
-  ret, err := json.MarshalIndent(obj, "", "\t");
-
-  return string(ret),nil;
+  return service.serviceResquest("GET", service.createUri("v1/rules") + "?locationId=" + location, nil);
 }
 
 func (service *RestService) getRule(locationId string, ruleId string) (string,error) {
-
-  client := &http.Client{
-  };
-
-  req, err := http.NewRequest("GET", service.createUri("v1/rules") + "/" + ruleId + "?locationId=" + locationId, nil);
-
-  if err != nil {
-    return "", err;
-  }
-
-  req.Header.Add("Content-Type","application/json");
-  req.Header.Add("Authorization", fmt.Sprintf("Bearer %s",service.token));
-  req.Header.Add("User-Agent","PostmanRuntime/7.21.0");
-  resp, err := client.Do(req);
-
-  if err != nil {
-    return "", err;
-  }
-
-  defer resp.Body.Close();
-
-  var obj map[string] interface{};
-  decoder := json.NewDecoder(resp.Body);
-  err = decoder.Decode(&obj);
-
-  if err != nil {
-    return "", err;
-  }
-
-  ret, err := json.MarshalIndent(obj, "", "\t");
-
-  return string(ret),nil;
+  return service.serviceResquest("GET", service.createUri("v1/rules") + "/" + ruleId + "?locationId=" + locationId, nil);
 }
 
 func (service *RestService) createRule(locationId string, rule []byte) (string,error) {
-
-  client := &http.Client{
-  };
-
-  req, err := http.NewRequest("POST", service.createUri("v1/rules") + "?locationId=" + locationId,  bytes.NewBuffer(rule));
-
-  if err != nil {
-    return "", err;
-  }
-
-  req.Header.Add("Content-Type","application/json");
-  req.Header.Add("Authorization", fmt.Sprintf("Bearer %s",service.token));
-  req.Header.Add("User-Agent","PostmanRuntime/7.21.0");
-  resp, err := client.Do(req);
-
-  if err != nil {
-    return "", err;
-  }
-
-  defer resp.Body.Close();
-
-  var obj map[string] interface{};
-  decoder := json.NewDecoder(resp.Body);
-  err = decoder.Decode(&obj);
-
-  if err != nil {
-    return "", err;
-  }
-
-  ret, err := json.MarshalIndent(obj, "", "\t");
-
-  return string(ret),nil;
+  return service.serviceResquest("POST", service.createUri("v1/rules") + "?locationId=" + locationId, bytes.NewBuffer(rule));
 }
 
 func (service *RestService) editRule(locationId string, ruleId string, rule []byte) (string,error) {
-
-  client := &http.Client{
-  };
-
   var raw map[string]interface{};
   if err := json.Unmarshal(rule, &raw); err != nil {
     return "", err;
@@ -462,102 +183,13 @@ func (service *RestService) editRule(locationId string, ruleId string, rule []by
     return "", err;
   }
 
-  req, err := http.NewRequest("PUT", service.createUri("v1/rules/" + ruleId) + "?locationId=" + locationId,  bytes.NewBuffer(jsonStr));
-
-  if err != nil {
-    return "", err;
-  }
-
-  req.Header.Add("Content-Type","application/json");
-  req.Header.Add("Authorization", fmt.Sprintf("Bearer %s",service.token));
-  req.Header.Add("User-Agent","PostmanRuntime/7.21.0");
-  resp, err := client.Do(req);
-
-  if err != nil {
-    return "", err;
-  }
-
-  defer resp.Body.Close();
-
-  var obj map[string] interface{};
-  decoder := json.NewDecoder(resp.Body);
-  err = decoder.Decode(&obj);
-
-  if err != nil {
-    return "", err;
-  }
-
-  ret, err := json.MarshalIndent(obj, "", "\t");
-
-  return string(ret),nil;
+  return service.serviceResquest("PUT",service.createUri("v1/rules/" + ruleId) + "?locationId=" + locationId, bytes.NewBuffer(jsonStr));
 }
 
 func (service *RestService) deleteRule(locationId string, ruleId string) (string,error) {
-
-  client := &http.Client{
-  };
-
-  req, err := http.NewRequest("DELETE", service.createUri("v1/rules") + "/" + ruleId + "?locationId=" + locationId, nil);
-
-  if err != nil {
-    return "", err;
-  }
-
-  req.Header.Add("Content-Type","application/json");
-  req.Header.Add("Authorization", fmt.Sprintf("Bearer %s",service.token));
-  req.Header.Add("User-Agent","PostmanRuntime/7.21.0");
-  resp, err := client.Do(req);
-
-  if err != nil {
-    return "", err;
-  }
-
-  defer resp.Body.Close();
-
-  var obj map[string] interface{};
-  decoder := json.NewDecoder(resp.Body);
-  err = decoder.Decode(&obj);
-
-  if err != nil {
-    return "", err;
-  }
-
-  ret, err := json.MarshalIndent(obj, "", "\t");
-
-  return string(ret),nil;
+  return service.serviceResquest("DELETE",service.createUri("v1/rules") + "/" + ruleId + "?locationId=" + locationId, nil);
 }
 
 func (service *RestService) executeRule(locationId string, ruleId string) (string,error) {
-
-  client := &http.Client{
-  };
-
-  req, err := http.NewRequest("POST", service.createUri("v1/rules/execute") + "/" + ruleId + "?locationId=" + locationId, nil);
-
-  if err != nil {
-    return "", err;
-  }
-
-  req.Header.Add("Content-Type","application/json");
-  req.Header.Add("Authorization", fmt.Sprintf("Bearer %s",service.token));
-  req.Header.Add("User-Agent","PostmanRuntime/7.21.0");
-  resp, err := client.Do(req);
-
-  if err != nil {
-    return "", err;
-  }
-
-  defer resp.Body.Close();
-
-  var obj map[string] interface{};
-  decoder := json.NewDecoder(resp.Body);
-  err = decoder.Decode(&obj);
-
-  if err != nil {
-    return "", err;
-  }
-
-  ret, err := json.MarshalIndent(obj, "", "\t");
-
-  return string(ret),nil;
+  return service.serviceResquest("POST", service.createUri("v1/rules/execute") + "/" + ruleId + "?locationId=" + locationId, nil);
 }

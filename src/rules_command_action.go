@@ -324,8 +324,38 @@ func (action RulesExecuteCommandAction) usage() {
 }
 
 func (action RulesExecuteCommandAction) run() bool {
-  fmt.Println("Rules Execute Action");
-  return false;
+  cmdLine := createCommandLineParser();
+
+  token:= action.getToken(cmdLine);
+  rule :=  cmdLine.getStringParameter("rule");
+  location :=  cmdLine.getStringParameter("location");
+
+  if token == "" {
+    fmt.Println("Smartthings token missing. Type st_cli help to usage options.");
+    return false;
+  }
+
+  if location == "" {
+    fmt.Println("Location missing. Type st_cli help to usage options.");
+    return false;
+  }
+
+  if rule == "" {
+    fmt.Println("Rule missing. Type st_cli help to usage options.");
+    return false;
+  }
+
+  service := createRestService(token);
+  rule,err := service.executeRule(location, rule);
+
+  if err != nil {
+    fmt.Println("Error searching rules: %s", err);
+    return false;
+  }
+
+  fmt.Println(rule);
+
+  return true;
 }
 
 func (action RulesDeleteCommandAction) usage() {

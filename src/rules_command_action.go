@@ -65,6 +65,10 @@ var rulesCommands []Option = []Option {
 
 func (action RulesGetCommandAction) usage() {
   fmt.Println("\tUsage: st_cli rules get <options>\r\n");
+  fmt.Println("\t\tOptions:\r\n");
+  fmt.Println("\t\t--token|-token=\t\tSmartthings token\r\n");
+  fmt.Println("\t\t--rule|-rule=\t\tRule Id to be retrieved\r\n");
+  fmt.Println("\t\t--location|-location=\tLocation this rule belongs\r\n");
 }
 
 func (action RulesGetCommandAction) run() bool {
@@ -140,6 +144,13 @@ func (action RulesListCommandAction) run() bool {
 
 func (action RulesCreateCommandAction) usage() {
   fmt.Println("\tUsage: st_cli rules create <options>\r\n");
+  fmt.Println("\t\tOptions:\r\n");
+  fmt.Println("\t\t--token|-token=\t\tSmartthings token\r\n");
+  fmt.Println("\t\t--location|-location=\tLocation this rule belongs\r\n");
+  fmt.Println("\t\t--file|-file=\t\tA file with the rule to be created. It's optional.");
+  fmt.Println("\t\t\t\t\tIf not informed an editor will be open.\r\n");
+  fmt.Println("\t\t--editor|-editor=\tEditor that will be used: vi, vim, nano");
+  fmt.Println("\t\t\t\t\tOnly if no file has been informed.\r\n");
 }
 
 func (action RulesCreateCommandAction) run() bool {
@@ -225,6 +236,13 @@ func (action RulesCreateCommandAction) run() bool {
 
 func (action RulesEditCommandAction) usage() {
   fmt.Println("\tUsage: st_cli rules edit <options>\r\n");
+  fmt.Println("\t\tOptions:\r\n");
+  fmt.Println("\t\t--token|-token=\t\tSmartthings token\r\n");
+  fmt.Println("\t\t--location|-location=\tLocation this rule belongs\r\n");
+  fmt.Println("\t\t--file|-file=\t\tA file with the rule to be updated. It's optional.");
+  fmt.Println("\t\t\t\t\tIf not informed an editor will be open.\r\n");
+  fmt.Println("\t\t--editor|-editor=\tEditor that will be used: vi, vim, nano");
+  fmt.Println("\t\t\t\t\tOnly if no file has been informed.\r\n");
 }
 
 func (action RulesEditCommandAction) run() bool {
@@ -321,6 +339,10 @@ func (action RulesEditCommandAction) run() bool {
 
 func (action RulesExecuteCommandAction) usage() {
   fmt.Println("\tUsage: st_cli rules execute <options>\r\n");
+  fmt.Println("\t\tOptions:\r\n");
+  fmt.Println("\t\t--token|-token=\t\tSmartthings token\r\n");
+  fmt.Println("\t\t--location|-location=\tLocation this rule belongs\r\n");
+  fmt.Println("\t\t--rule|-rule=\t\tRule Id to be executed\r\n");
 }
 
 func (action RulesExecuteCommandAction) run() bool {
@@ -360,6 +382,9 @@ func (action RulesExecuteCommandAction) run() bool {
 
 func (action RulesDeleteCommandAction) usage() {
   fmt.Println("\tUsage: st_cli rules delete <options>\r\n");
+  fmt.Println("\t\t--token|-token=\t\tSmartthings token\r\n");
+  fmt.Println("\t\t--location|-location=\tLocation this rule belongs\r\n");
+  fmt.Println("\t\t--rule|-rule=\t\tRule Id to be deleted\r\n");
 }
 
 func (action RulesDeleteCommandAction) run() bool {

@@ -109,8 +109,8 @@ func (action RulesGetCommandAction) run() bool {
 func (action RulesListCommandAction) usage() {
   fmt.Println("\tUsage: st_cli rules list <options>\r\n");
   fmt.Println("\t\tOptions:\r\n");
-  fmt.Println("\t\t--token|-token=\t\t\tSmartthings token\r\n");
-  fmt.Println("\t\t--location|-location=\t\t\tLocation Id to listing rules\r\n");
+  fmt.Println("\t\t--token|-token=\t\tSmartthings token\r\n");
+  fmt.Println("\t\t--location|-location=\tLocation Id to listing rules\r\n");
 }
 
 func (action RulesListCommandAction) run() bool {

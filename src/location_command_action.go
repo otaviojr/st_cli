@@ -20,7 +20,7 @@ var locationCommands []Option = []Option {
 func (action LocationListCommandAction) usage() {
   fmt.Println("\t\tUsage: st_cli location list <options>\r\n");
   fmt.Println("\t\tOptions:\r\n");
-  fmt.Println("\t\t--token|-token=\t\t\tSmartthings token\r\n");
+  fmt.Println("\t\t--token|-token=\t\tSmartthings token\r\n");
 }
 
 func (action LocationListCommandAction) run() bool {

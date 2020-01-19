@@ -28,7 +28,7 @@ var scenesCommands []Option = []Option {
 func (action ScenesListCommandAction) usage() {
   fmt.Println("\tUsage: st_cli scenes list <option>\r\n");
   fmt.Println("\t\tOptions:\r\n");
-  fmt.Println("\t\t--token|-token=\t\t\tSmartthings token\r\n");
+  fmt.Println("\t\t--token|-token=\t\tSmartthings token\r\n");
 }
 
 func (action ScenesListCommandAction) run() bool {
@@ -57,8 +57,8 @@ func (action ScenesListCommandAction) run() bool {
 func (action ScenesExecuteCommandAction) usage() {
   fmt.Println("\tUsage: st_cli scenes execute <option>\r\n");
   fmt.Println("\t\tOptions:\r\n");
-  fmt.Println("\t\t--token|-token=\t\t\tSmartthings token\r\n");
-  fmt.Println("\t\t--scene|-scene=\t\t\tScene ID to be executed\r\n");
+  fmt.Println("\t\t--token|-token=\t\tSmartthings token\r\n");
+  fmt.Println("\t\t--scene|-scene=\t\tScene ID to be executed\r\n");
 }
 
 func (action ScenesExecuteCommandAction) run() bool {

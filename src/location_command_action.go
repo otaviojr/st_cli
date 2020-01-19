@@ -46,11 +46,11 @@ func (action LocationListCommandAction) run() bool {
   return true;
 }
 
-
 func (action LocationCommandAction) usage() {
   fmt.Println("\tUsage: st_cli location <command> <options>\r\n");
   action.usageAction(locationCommands);
 }
+
 func (action LocationCommandAction) run() bool {
   return action.runAction(locationCommands);
 }

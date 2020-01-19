@@ -1,5 +1,8 @@
 package main
 
+import "os"
+import "io/ioutil"
+import "os/exec"
 import "fmt"
 
 type RulesCommandAction struct {
@@ -65,8 +68,38 @@ func (action RulesGetCommandAction) usage() {
 }
 
 func (action RulesGetCommandAction) run() bool {
-  fmt.Println("Rules Get Action");
-  return false;
+  cmdLine := createCommandLineParser();
+
+  token:= action.getToken(cmdLine);
+  rule :=  cmdLine.getStringParameter("rule");
+  location :=  cmdLine.getStringParameter("location");
+
+  if token == "" {
+    fmt.Println("Smartthings token missing. Type st_cli help to usage options.");
+    return false;
+  }
+
+  if location == "" {
+    fmt.Println("Location missing. Type st_cli help to usage options.");
+    return false;
+  }
+
+  if rule == "" {
+    fmt.Println("Rule missing. Type st_cli help to usage options.");
+    return false;
+  }
+
+  service := createRestService(token);
+  rule,err := service.getRule(location, rule);
+
+  if err != nil {
+    fmt.Println("Error searching rules: %s", err);
+    return false;
+  }
+
+  fmt.Println(rule);
+
+  return true;
 }
 
 func (action RulesListCommandAction) usage() {
@@ -110,8 +143,180 @@ func (action RulesCreateCommandAction) usage() {
 }
 
 func (action RulesCreateCommandAction) run() bool {
-  fmt.Println("Rules Create Action");
-  return false;
+  cmdLine := createCommandLineParser();
+
+  token:= action.getToken(cmdLine);
+  location :=  cmdLine.getStringParameter("location");
+  fileName :=  cmdLine.getStringParameter("file");
+  editor :=  cmdLine.getStringParameter("editor");
+
+  if token == "" {
+    fmt.Println("Smartthings token missing. Type st_cli help to usage options.");
+    return false;
+  }
+
+  if location == "" {
+    fmt.Println("Location missing. Type st_cli help to usage options.");
+    return false;
+  }
+
+  var ruleContent []byte;
+
+  if fileName == "" {
+    command := "vi";
+
+    if editor != "" {
+      command = editor;
+    }
+
+    file, err := ioutil.TempFile(os.TempDir(), "st-cli-rules-");
+    if err != nil {
+      fmt.Println("Error creating temp file");
+      return false;
+    }
+
+    defer os.Remove(file.Name());
+
+    cmd := exec.Command(command, file.Name());
+
+    cmd.Stdin = os.Stdin
+    cmd.Stdout = os.Stdout
+    cmdErr := cmd.Run();
+
+    if err != nil {
+      fmt.Println("Error opening editor: {}", cmdErr);
+      return false;
+  	}
+
+    dat, err := ioutil.ReadFile(file.Name());
+    if err != nil {
+      fmt.Println("Error reading rule file: {}", err);
+      return false;
+  	}
+
+    ruleContent = dat;
+  } else {
+    dat, err := ioutil.ReadFile(fileName);
+    if err != nil {
+      fmt.Println("Error reading rule file: {}", err);
+      return false;
+  	}
+
+    ruleContent = dat;
+  }
+
+  if string(ruleContent) == "" {
+    fmt.Println("Rule can not be empty");
+    return false;
+  }
+
+  service := createRestService(token);
+  rule,err := service.createRule(location, ruleContent);
+
+  if err != nil {
+    fmt.Println("Error searching rules: %s", err);
+    return false;
+  }
+
+  fmt.Println(rule);
+
+  return true;
+}
+
+func (action RulesEditCommandAction) usage() {
+  fmt.Println("\tUsage: st_cli rules edit <options>\r\n");
+}
+
+func (action RulesEditCommandAction) run() bool {
+  cmdLine := createCommandLineParser();
+
+  token:= action.getToken(cmdLine);
+  location :=  cmdLine.getStringParameter("location");
+  rule :=  cmdLine.getStringParameter("rule");
+  fileName :=  cmdLine.getStringParameter("file");
+  editor :=  cmdLine.getStringParameter("editor");
+
+  if token == "" {
+    fmt.Println("Smartthings token missing. Type st_cli help to usage options.");
+    return false;
+  }
+
+  if location == "" {
+    fmt.Println("Location missing. Type st_cli help to usage options.");
+    return false;
+  }
+
+  if rule == "" {
+    fmt.Println("Rule missing. Type st_cli help to usage options.");
+    return false;
+  }
+
+  var ruleContent []byte;
+
+  service := createRestService(token);
+
+  if fileName == "" {
+    command := "vi";
+
+    if editor != "" {
+      command = editor;
+    }
+
+    file, err := ioutil.TempFile(os.TempDir(), "st-cli-rules-");
+    if err != nil {
+      fmt.Println("Error creating temp file");
+      return false;
+    }
+
+    defer os.Remove(file.Name());
+
+    ruleStr,err := service.getRule(location, rule);
+
+    ioutil.WriteFile(file.Name(), []byte(ruleStr), 0644);
+
+    cmd := exec.Command(command, file.Name());
+
+    cmd.Stdin = os.Stdin
+    cmd.Stdout = os.Stdout
+    cmdErr := cmd.Run();
+
+    if err != nil {
+      fmt.Println("Error opening editor: {}", cmdErr);
+      return false;
+  	}
+
+    dat, err := ioutil.ReadFile(file.Name());
+    if err != nil {
+      fmt.Println("Error reading rule file: {}", err);
+      return false;
+  	}
+
+    ruleContent = dat;
+  } else {
+    dat, err := ioutil.ReadFile(fileName);
+    if err != nil {
+      fmt.Println("Error reading rule file: {}", err);
+      return false;
+  	}
+
+    ruleContent = dat;
+  }
+
+  if string(ruleContent) == "" {
+    fmt.Println("Rule can not be empty");
+    return false;
+  }
+
+  ruleEdited,err := service.editRule(location, rule, ruleContent);
+
+  if err != nil {
+    fmt.Println("Error searching rules: %s", err);
+    return false;
+  }
+
+  fmt.Println(ruleEdited);
+
+  return true;
 }
 
 func (action RulesExecuteCommandAction) usage() {
@@ -128,8 +333,38 @@ func (action RulesDeleteCommandAction) usage() {
 }
 
 func (action RulesDeleteCommandAction) run() bool {
-  fmt.Println("Rules Delete Action");
-  return false;
+  cmdLine := createCommandLineParser();
+
+  token:= action.getToken(cmdLine);
+  rule :=  cmdLine.getStringParameter("rule");
+  location :=  cmdLine.getStringParameter("location");
+
+  if token == "" {
+    fmt.Println("Smartthings token missing. Type st_cli help to usage options.");
+    return false;
+  }
+
+  if location == "" {
+    fmt.Println("Location missing. Type st_cli help to usage options.");
+    return false;
+  }
+
+  if rule == "" {
+    fmt.Println("Rule missing. Type st_cli help to usage options.");
+    return false;
+  }
+
+  service := createRestService(token);
+  rule,err := service.deleteRule(location, rule);
+
+  if err != nil {
+    fmt.Println("Error searching rules: %s", err);
+    return false;
+  }
+
+  fmt.Println(rule);
+
+  return true;
 }
 
 func (action RulesCommandAction) usage() {

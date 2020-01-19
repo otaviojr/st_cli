@@ -7,9 +7,9 @@ import "bytes"
 import "fmt"
 
 type Command struct {
-  Component string		`json:"component"`
-  Capability string		`json:"capability"`
-  Command string		`json:"command"`
+  Component string		    `json:"component"`
+  Capability string		    `json:"capability"`
+  Command string		      `json:"command"`
   Arguments []interface{}	`json:"arguments"`
 }
 
@@ -319,6 +319,158 @@ func (service *RestService) listRules(location string) (string,error) {
   };
 
   req, err := http.NewRequest("GET", service.createUri("v1/rules") + "?locationId=" + location, nil);
+
+  if err != nil {
+    return "", err;
+  }
+
+  req.Header.Add("Content-Type","application/json");
+  req.Header.Add("Authorization", fmt.Sprintf("Bearer %s",service.token));
+  req.Header.Add("User-Agent","PostmanRuntime/7.21.0");
+  resp, err := client.Do(req);
+
+  if err != nil {
+    return "", err;
+  }
+
+  defer resp.Body.Close();
+
+  var obj map[string] interface{};
+  decoder := json.NewDecoder(resp.Body);
+  err = decoder.Decode(&obj);
+
+  if err != nil {
+    return "", err;
+  }
+
+  ret, err := json.MarshalIndent(obj, "", "\t");
+
+  return string(ret),nil;
+}
+
+func (service *RestService) getRule(locationId string, ruleId string) (string,error) {
+
+  client := &http.Client{
+  };
+
+  req, err := http.NewRequest("GET", service.createUri("v1/rules") + "/" + ruleId + "?locationId=" + locationId, nil);
+
+  if err != nil {
+    return "", err;
+  }
+
+  req.Header.Add("Content-Type","application/json");
+  req.Header.Add("Authorization", fmt.Sprintf("Bearer %s",service.token));
+  req.Header.Add("User-Agent","PostmanRuntime/7.21.0");
+  resp, err := client.Do(req);
+
+  if err != nil {
+    return "", err;
+  }
+
+  defer resp.Body.Close();
+
+  var obj map[string] interface{};
+  decoder := json.NewDecoder(resp.Body);
+  err = decoder.Decode(&obj);
+
+  if err != nil {
+    return "", err;
+  }
+
+  ret, err := json.MarshalIndent(obj, "", "\t");
+
+  return string(ret),nil;
+}
+
+func (service *RestService) createRule(locationId string, rule []byte) (string,error) {
+
+  client := &http.Client{
+  };
+
+  req, err := http.NewRequest("POST", service.createUri("v1/rules") + "?locationId=" + locationId,  bytes.NewBuffer(rule));
+
+  if err != nil {
+    return "", err;
+  }
+
+  req.Header.Add("Content-Type","application/json");
+  req.Header.Add("Authorization", fmt.Sprintf("Bearer %s",service.token));
+  req.Header.Add("User-Agent","PostmanRuntime/7.21.0");
+  resp, err := client.Do(req);
+
+  if err != nil {
+    return "", err;
+  }
+
+  defer resp.Body.Close();
+
+  var obj map[string] interface{};
+  decoder := json.NewDecoder(resp.Body);
+  err = decoder.Decode(&obj);
+
+  if err != nil {
+    return "", err;
+  }
+
+  ret, err := json.MarshalIndent(obj, "", "\t");
+
+  return string(ret),nil;
+}
+
+func (service *RestService) editRule(locationId string, ruleId string, rule []byte) (string,error) {
+
+  client := &http.Client{
+  };
+
+  var raw map[string]interface{};
+  if err := json.Unmarshal(rule, &raw); err != nil {
+    return "", err;
+  }
+
+  delete(raw,"id");
+
+  jsonStr, err := json.Marshal(raw);
+  if err != nil {
+    return "", err;
+  }
+
+  req, err := http.NewRequest("PUT", service.createUri("v1/rules/" + ruleId) + "?locationId=" + locationId,  bytes.NewBuffer(jsonStr));
+
+  if err != nil {
+    return "", err;
+  }
+
+  req.Header.Add("Content-Type","application/json");
+  req.Header.Add("Authorization", fmt.Sprintf("Bearer %s",service.token));
+  req.Header.Add("User-Agent","PostmanRuntime/7.21.0");
+  resp, err := client.Do(req);
+
+  if err != nil {
+    return "", err;
+  }
+
+  defer resp.Body.Close();
+
+  var obj map[string] interface{};
+  decoder := json.NewDecoder(resp.Body);
+  err = decoder.Decode(&obj);
+
+  if err != nil {
+    return "", err;
+  }
+
+  ret, err := json.MarshalIndent(obj, "", "\t");
+
+  return string(ret),nil;
+}
+
+func (service *RestService) deleteRule(locationId string, ruleId string) (string,error) {
+
+  client := &http.Client{
+  };
+
+  req, err := http.NewRequest("DELETE", service.createUri("v1/rules") + "/" + ruleId + "?locationId=" + locationId, nil);
 
   if err != nil {
     return "", err;
